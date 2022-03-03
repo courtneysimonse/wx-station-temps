@@ -1,3 +1,5 @@
+import {csv} from "https://cdn.skypack.dev/d3-fetch@3";
+
 // US map options
 var options = {
   zoomSnap: .1,
@@ -65,6 +67,7 @@ slider.noUiSlider.on('update', function (values, handle) {
 });
 
 
+const tempData = await csv("data/minmaxtemps.csv");
 
 // GET DATA
 processData();
@@ -73,6 +76,7 @@ processData();
 function processData() {
 
   console.log(hexgrid);
+  console.log(tempData);
 
   drawMap();
 
@@ -129,12 +133,18 @@ function updateMap(temps) {
   hexGridLayer.eachLayer(function (layer) {
 
     var dailyTemps = [];
-    for (var prop in layer.feature.properties) {
+    var hexId = layer.feature.properties['id'];
+
+    const row = tempData.find(hex => hex.id == hexId);
+    // console.log(row);
+
+    for (var prop in row) {
+      // console.log(prop);
       if (prop.search(/tmax_bydate/) != -1) {
-        var maxTemp = layer.feature.properties[prop];
-        var minTemp = layer.feature.properties[prop.replace("tmax","tmin")];
+        var maxTemp = row[prop];
+        var minTemp = row[prop.replace("tmax","tmin")];
         if (minTemp >= temps[0] && maxTemp <= temps[1]) {
-          dailyTemps.push(layer.feature.properties[prop]);
+          dailyTemps.push(row[prop]);
         }
       }
     }
