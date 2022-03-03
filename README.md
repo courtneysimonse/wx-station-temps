@@ -1,2 +1,1 @@
-# leaflet-template
- template for a Leaflet map
+# wx-station-temps
