@@ -2,3 +2,4 @@
 * text=auto
 data/hex50kmWxStations.geojson filter=lfs diff=lfs merge=lfs -text
 data/hex50kmWxStations.js filter=lfs diff=lfs merge=lfs -text
+data/hex50kmWxStations.js filter=lfs diff=lfs merge=lfs -text
