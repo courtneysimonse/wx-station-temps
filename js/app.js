@@ -58,8 +58,27 @@ noUiSlider.create(slider, {
 var hexGridLayer = L.geoJSON();
 
 // example breaks for legend
-var breaks = [0, 20, 50, 75, 100, 150, 200, 366];
+var breaksAnnual = [0, 20, 50, 75, 100, 150, 200, 366];
+var breaksMonthly = [0, 2, 5, 10, 15, 20, 25, 31];
+var breaks = breaksAnnual;
 var colorize = chroma.scale('Spectral').domain([1,0]).classes(breaks).mode('lab');
+
+// select time frame
+var month = document.getElementById('month');
+month.value = 'all';
+month.addEventListener('change', function() {
+  console.log(this.value);
+  updateMap(slider.noUiSlider.get());
+  if (this.value == 'all') {
+    breaks = breaksAnnual;
+    colorize = chroma.scale('Spectral').domain([1,0]).classes(breaks).mode('lab');
+  } else {
+    breaks = breaksMonthly;
+    colorize = chroma.scale('Spectral').domain([1,0]).classes(breaks).mode('lab');
+  }
+  updateLegend(breaks,colorize);
+});
+
 
 slider.noUiSlider.on('update', function (values, handle) {
   // console.log(values);
@@ -132,6 +151,8 @@ function updateMap(temps) {
 
   hexGridLayer.eachLayer(function (layer) {
 
+    var searchStr = "bydate_"+month.value.toString();
+
     var dailyTemps = [];
     var hexId = layer.feature.properties['id'];
 
@@ -141,10 +162,12 @@ function updateMap(temps) {
     for (var prop in row) {
       // console.log(prop);
       if (prop.search(/tmax_bydate/) != -1) {
-        var maxTemp = row[prop];
-        var minTemp = row[prop.replace("tmax","tmin")];
-        if (minTemp >= temps[0] && maxTemp <= temps[1]) {
-          dailyTemps.push(row[prop]);
+        if (prop.search(searchStr) != -1 || month.value == "all") {
+          var maxTemp = row[prop];
+          var minTemp = row[prop.replace("tmax","tmin")];
+          if (minTemp >= temps[0] && maxTemp <= temps[1]) {
+            dailyTemps.push(row[prop]);
+          }
         }
       }
     }
@@ -173,4 +196,23 @@ function style (feature) {
     color: 'grey',
     fillOpacity: 0.7
   };
+}  // end style()
+
+function updateLegend(breaks, colorize) {
+  var legendul = document.querySelector(".legend ul");
+  // console.log(legendUl);
+  let legendList = "";
+
+  for (var i = 0; i < breaks.length - 1; i++) {
+
+    var color = colorize(breaks[i], breaks);
+
+    var classRange = '<li><span style="background:' + color + '"></span> ' +
+        breaks[i].toLocaleString() + ' &mdash; ' +
+        breaks[i + 1].toLocaleString() + '</li>';
+    legendList += classRange;
+
+  }
+
+  legendul.innerHTML = legendList;
 }
