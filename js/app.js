@@ -66,6 +66,7 @@ var colorize = chroma.scale('Spectral').domain([1,0]).classes(breaks).mode('lab'
 // select time frame
 var month = document.getElementById('month');
 month.value = 'all';
+
 month.addEventListener('change', function() {
   console.log(this.value);
   updateMap(slider.noUiSlider.get());
@@ -79,6 +80,7 @@ month.addEventListener('change', function() {
   updateLegend(breaks,colorize);
 });
 
+console.log(document.querySelector('input[name="mode"]:checked').value);
 
 slider.noUiSlider.on('update', function (values, handle) {
   // console.log(values);

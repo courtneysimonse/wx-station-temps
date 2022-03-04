@@ -28,11 +28,16 @@
 
     <div id="mapid"></div>
     <div class="py-3" id="ui-controls">
-      <!-- <div class="form-check form-switch mb-2">
-        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
-        <label class="form-check-label" for="flexSwitchCheckDefault">Default switch checkbox input</label>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="mode" id="avg" value="avg">
+        <label class="form-check-label" for="avg">Avg</label>
       </div>
-      <select class="form-select mb-2">
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="mode" id="minmax" value="minmax" checked>
+        <label class="form-check-label" for="minmax">Min/Max</label>
+      </div>
+
+      <!-- <select class="form-select form-select-sm mb-2">
         <option value="avg">Days with Average Temp in Range</option>
         <option value="minmax" selected>Days within Temp Range</option>
       </select> -->
