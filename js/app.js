@@ -161,18 +161,34 @@ function updateMap(temps) {
     const row = tempData.find(hex => hex.id == hexId);
     // console.log(row);
 
-    for (var prop in row) {
-      // console.log(prop);
-      if (prop.search(/tmax_bydate/) != -1) {
-        if (prop.search(searchStr) != -1 || month.value == "all") {
-          var maxTemp = row[prop];
-          var minTemp = row[prop.replace("tmax","tmin")];
-          if (minTemp >= temps[0] && maxTemp <= temps[1]) {
-            dailyTemps.push(row[prop]);
+    if (document.querySelector('input[name="mode"]:checked').value == "minmax") {
+      for (var prop in row) {
+        // console.log(prop);
+        if (prop.search(/tmax_bydate/) != -1) {
+          if (prop.search(searchStr) != -1 || month.value == "all") {
+            var maxTemp = row[prop];
+            var minTemp = row[prop.replace("tmax","tmin")];
+            if (minTemp >= temps[0] && maxTemp <= temps[1]) {
+              dailyTemps.push(maxTemp);
+            }
+          }
+        }
+      }
+    } else if (document.querySelector('input[name="mode"]:checked').value == "avg") {
+      for (var prop in row) {
+        // console.log(prop);
+        if (prop.search(/tavg_bydate/) != -1) {
+          if (prop.search(searchStr) != -1 || month.value == "all") {
+            var avgTemp = row[prop];
+            if (avgTemp >= temps[0] && avgTemp <= temps[1]) {
+              dailyTemps.push(avgTemp);
+            }
           }
         }
       }
     }
+
+
     // console.log(dailyTemps);
 
     layer.feature.properties["days"] = dailyTemps.length;
