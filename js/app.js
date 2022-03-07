@@ -87,6 +87,13 @@ slider.noUiSlider.on('update', function (values, handle) {
   updateMap(values);
 });
 
+document.querySelectorAll('input[name="mode"]').forEach((item, i) => {
+  item.addEventListener('change', () =>{
+    console.log(document.querySelector('input[name="mode"]:checked').value);
+    updateMap(slider.noUiSlider.get());
+  })
+});
+;
 
 const tempData = await csv("data/minmaxtemps.csv");
 
