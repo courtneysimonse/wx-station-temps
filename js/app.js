@@ -68,8 +68,8 @@ var month = document.getElementById('month');
 month.value = 'all';
 
 month.addEventListener('change', function() {
-  console.log(this.value);
-  updateMap(slider.noUiSlider.get());
+  // console.log(this.value);
+  // console.log(slider.noUiSlider.get());
   if (this.value == 'all') {
     breaks = breaksAnnual;
     colorize = chroma.scale('Spectral').domain([1,0]).classes(breaks).mode('lab');
@@ -77,6 +77,7 @@ month.addEventListener('change', function() {
     breaks = breaksMonthly;
     colorize = chroma.scale('Spectral').domain([1,0]).classes(breaks).mode('lab');
   }
+  updateMap(slider.noUiSlider.get());
   updateLegend(breaks,colorize);
 });
 
@@ -89,7 +90,9 @@ slider.noUiSlider.on('update', function (values, handle) {
 
 document.querySelectorAll('input[name="mode"]').forEach((item, i) => {
   item.addEventListener('change', () =>{
-    console.log(document.querySelector('input[name="mode"]:checked').value);
+    // console.log(document.querySelector('input[name="mode"]:checked').value);
+    // console.log(slider.noUiSlider.get());
+    // console.log(month.value);
     updateMap(slider.noUiSlider.get());
   })
 });
@@ -156,11 +159,13 @@ function drawLegend(breaks, colorize) {
 } // end drawLegend()
 
 function updateMap(temps) {
-  // console.log(temps);
+  console.log(temps);
+  console.log(month.value);
+  console.log(document.querySelector('input[name="mode"]:checked').value);
 
   hexGridLayer.eachLayer(function (layer) {
 
-    var searchStr = "bydate_"+month.value.toString();
+    var searchStr = "bydate_"+month.value.toString()+"-";
 
     var dailyTemps = [];
     var hexId = layer.feature.properties['id'];
@@ -173,10 +178,11 @@ function updateMap(temps) {
         // console.log(prop);
         if (prop.search(/tmax_bydate/) != -1) {
           if (prop.search(searchStr) != -1 || month.value == "all") {
+            var date = prop.replace("dly_tmax_bydate_","").replace("_mean","");
             var maxTemp = row[prop];
             var minTemp = row[prop.replace("tmax","tmin")];
             if (minTemp >= temps[0] && maxTemp <= temps[1]) {
-              dailyTemps.push(maxTemp);
+              dailyTemps.push({date:date,minTemp:minTemp,maxTemp:maxTemp});
             }
           }
         }
@@ -186,9 +192,10 @@ function updateMap(temps) {
         // console.log(prop);
         if (prop.search(/tavg_bydate/) != -1) {
           if (prop.search(searchStr) != -1 || month.value == "all") {
+            var date = prop.replace("dly_tavg_bydate_","").replace("_mean","");
             var avgTemp = row[prop];
             if (avgTemp >= temps[0] && avgTemp <= temps[1]) {
-              dailyTemps.push(avgTemp);
+              dailyTemps.push({date:date,avgTemp:avgTemp});
             }
           }
         }
@@ -199,8 +206,23 @@ function updateMap(temps) {
     // console.log(dailyTemps);
 
     layer.feature.properties["days"] = dailyTemps.length;
-    // var popupText = layer.feature.properties["days"].toString();
+    // var popupText;
+    //
+    // if (month.value == "all") {
+    //   if (dailyTemps.length == 0) {
+    //     popupText = "No dates match the criteria."
+    //   } else {
+    //     popupText = layer.feature.properties["days"].toString()+" days";
+    //   }
+    // } else {
+    //   if (dailyTemps.length == 0) {
+    //     popupText = "No dates match the criteria."
+    //   } else {
+    //     popupText = JSON.stringify(dailyTemps);
+    //   }
+    // }
     // layer.bindPopup(popupText);
+
 
   });
 
@@ -213,6 +235,8 @@ function style (feature) {
   let color = 'lightgrey';
   if (feature.properties["days"] != undefined) {
     color = colorize(feature.properties["days"]);
+  } else {
+    console.log(feature);
   }
   return {
     fillColor: color,
