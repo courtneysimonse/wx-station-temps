@@ -16,7 +16,7 @@ Next, I filtered the hexagons to only ones containing one or more weather statio
 
 ## Joining Temperature Data with Grid
 In QGIS, join the weather stations point layer with the CSV outputs from [DataPrep.ipnyb](data-prep/DataPrep.ipynb) on station id.
-Then use the "Join Attributes by Location (Summary)" tool to join the filtered hex grid and the weather station points and taking the mean of each temperature column (each day's min, max, and avg) for each weather station within the given hexagon. Export this file as a CSV without a geometry column ([minmaxtemps.csv](data/minmaxtemps.csv)). It will be joined to the hex grid in [app.js](scripts/app.js).
+Then use the "Join Attributes by Location (Summary)" tool to join the filtered hex grid and the weather station points and taking the mean of each temperature column (each day's min, max, and avg) for each weather station within the given hexagon. Export this file as a CSV without a geometry column ([minmaxtemps.csv](data/minmaxtemps.csv)). It will be joined to the hex grid in [app.js](js/app.js).
 
 ## Further Reading
 * https://www.ncei.noaa.gov/metadata/geoportal/rest/metadata/item/gov.noaa.ncdc%3AC01621/html
